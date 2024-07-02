@@ -15,3 +15,10 @@ Workflows
    workflows/unbuild_orders
    workflows/byproducts
    workflows/allocation
+<<<<<<< HEAD
+||||||| parent of 80394c76c (temp)
+   workflows/continuous_improvement
+=======
+   workflows/continuous_improvement
+   workflows/oee
+>>>>>>> 80394c76c (temp)
