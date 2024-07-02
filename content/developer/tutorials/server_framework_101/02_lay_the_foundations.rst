@@ -3,8 +3,9 @@ Chapter 2: Lay the foundations
 ==============================
 
 In this chapter, we'll focus on the fundamental building blocks of Odoo's data structure: models,
-fields, and records. Together, they form the foundations upon which we'll build our real estate
-application.
+fields, and records. We'll use them together to lay the foundations of our real estate application.
+
+.. _tutorials/server_framework_101/install_app:
 
 Install the app
 ===============
@@ -17,14 +18,15 @@ administrator.
 :menuselection:`Apps`. Search for :guilabel:`Real Estate` and click :guilabel:`Activate`.
 
 Nothing has changed? That's normal; the `real_estate` module you just installed is currently an
-empty shell. It doesn't even have a menu entry. Currently, it only contains two files:
+empty shell. It doesn't even have a menu entry. Currently, it only contains three files:
 
 - An empty :file:`__init__.py` file to make Python treat the :file:`real_estate` directory as a
   package.
 - The :file:`__manifest__.py` file that declares the :file:`real_estate` Python package as an Odoo
   module.
+- The optional :file:`static/description/icon.png` file that serves as the app icon.
 
-Those two files are the minimum requirements for a directory to be considered an Odoo module.
+The first two files are the minimum requirements for a directory to be considered an Odoo module.
 
 .. exercise::
    Search for each key of the :file:`real_estate/__manifest__.py` file in the :ref:`reference
@@ -34,11 +36,13 @@ Those two files are the minimum requirements for a directory to be considered an
 .. seealso::
    `The manifest file of the Sales app <{GITHUB_PATH}/addons/sale/__manifest__.py>`_
 
+.. _tutorials/server_framework_101/create_first_model:
+
 Create the first model
 ======================
 
 Now that our module is recognized by Odoo, it's time to build towards the business features. Data is
-essential for any real-world application, and our real estate module won't be an exception.
+essential for any real-world application, and our real estate application won't be an exception.
 
 To store data effectively, we need two things: a way to define the structure of that data, and a
 system to store and manipulate it. Fortunately, the server framework of Odoo comes equipped with the
@@ -117,8 +121,7 @@ create a model with some fields to represent real estate properties and their ch
 
 .. exercise::
 
-   #. Create a new file :file:`real_estate_property.py` at the root of the `real_estate` module.
-
+   #. Create a new :file:`real_estate_property.py` file at the root of the `real_estate` module.
    #. Update the :file:`real_estate/__init__.py` file to relatively import the
       :file:`real_estate_property.py` file, like so:
 
@@ -147,12 +150,12 @@ create a model with some fields to represent real estate properties and their ch
 .. spoiler:: Solution
 
    .. code-block:: python
-      :caption: __init__.py
+      :caption: `__init__.py`
 
       from . import real_estate_property
 
    .. code-block:: python
-      :caption: real_estate_property.py
+      :caption: `real_estate_property.py`
 
       from odoo import fields, models
 
@@ -187,17 +190,20 @@ create a model with some fields to represent real estate properties and their ch
           availability_date = fields.Date(string="Availability Date")
 
 Congrats, you have just defined the first model of our real estate app! However, the changes have
-not yet been applied to the database. To do so, you must add `-u real_estate` to the server start-up
-command and restart the server. The :option:`-u <odoo-bin --update>` argument tells the server to
-upgrade the specified modules at start-up.
+not yet been applied to the database. To do so, you must add the `-u real_estate` argument to the
+server start-up command and restart the server. The :option:`-u <odoo-bin --update>` argument tells
+the server to update the specified modules at start-up.
+
+.. _tutorials/server_framework_101/inspect_sql_table:
 
 Inspect the SQL table
 =====================
 
-Earlier, we quickly introduced models as a convenient way to store and handle data in Odoo. These
-models not only define the structure and behavior of data in Python, but they also correspond to SQL
-tables in the database. The `_name` attribute of their model is taken (with dots replaced by
-underscores) as the name of the corresponding table.
+Earlier, we quickly introduced models as a convenient way to store and handle data in Odoo. In fact,
+these models not only define the structure and behavior of data in Python, but they also correspond
+to SQL tables in the database. The `_name` attribute of their model is taken (with dots replaced by
+underscores) as the name of the corresponding table. For example, the `real.estate.property` model
+is linked to the `real_estate_property` table.
 
 The same goes for fields that become columns in the SQL table of their model. The name of the class
 attribute representing the field is taken as the column name while the field's class determines the
@@ -288,9 +294,146 @@ typically find:
 .. seealso::
    :ref:`Reference documentation for automatic fields <reference/fields/automatic>`
 
+.. _tutorials/server_framework_101/load_data_files:
+
+Load data files
+===============
+
+Now that we have created our first model, let's consider an important question: What's missing from
+our database? The answer is simple: data!
+
+While we could create new records directly from the user interface, this approach has some
+limitations. It would be quite tedious and time-consuming, especially for large amounts of data, and
+the changes would only affect the current database.
+
+Fortunately, the server framework allows for a different approach: describe data operations in XML
+format in so-called **data files** and load them automatically at server start-up. This automates
+the process of populating the database, saving time and effort, and allows developers to include
+default data or configurations directly in their modules.
+
+The most common data operation is creating new records through the `record` and `field` XML
+elements, but other operations exist, such as `delete`, which deletes previously created records, or
+even `function`, which allows executing arbitrary code.
+
+.. seealso::
+   :doc:`Reference documentation for data file <../../reference/backend/data>`
+
+Some data operations require their data elements to be uniquely identified by the system. This is
+achieved by means of the `id` attribute, also known as the **XML ID** or **external identifier**. It
+provides a way for other elements to reference it with the `ref` attribute and links data elements
+to the records they create or update. XML IDs are automatically prefixed with their module name when
+created from a data file so that records can be referenced by their full XML ID `<module>.<id>`.
+
+.. example::
+   Let's again take the `product` model as an example and describe a few product records in a data
+   file.
+
+   .. code-block:: xml
+
+      <?xml version="1.0" encoding="utf-8"?>
+      <odoo>
+
+          <record id="coffee_table" model="product">
+              <field name="name">Coffee table</field>
+              <field name="description">A dark wood table easy to match with other furnishing.</field>
+              <field name="price">275</field>
+              <field name="category">home_decor</field>
+          </record>
+
+          <record id="product.tshirt" model="product">
+              <field name="name">T-shirt</field>
+              <field name="price">29.99</field>
+              <field name="shop_id" ref="product.tshirt_shop"/>
+          </record>
+
+      </odoo>
+
+   .. note::
+      As we can see, data files are rather straightforward:
+
+      - The root element must be `odoo`.
+      - Multiple data operations can be described inside a single `odoo` element.
+      - The `id` attribute can we written with the module prefix included.
+      - Required fields must be provided a value if they don't have a default one.
+      - Non-required fields can be omitted.
+      - The `ref` attribute is used to reference other records by their XML ID and use their record
+        ID as value.
+
+Let's now load some default real estate properties in our database.
+
+.. exercise::
+
+   #. Create a new :file:`real_estate_property_data.xml` file at the root of the `real_estate`
+      module.
+   #. Update the manifest to let the server know that it should load our data file. To do so, have
+      the `data` key list our data file name.
+   #. Use the `record` and `field` data operation to describe at least three default properties
+      records. Try to vary property types and set different values than the default ones.
+
+      .. tip::
+         See the :ref:`reference documentation on Date and Datetime fields <reference/fields/date>`
+         to learn about the format to use for the `availability_date` field.
+
+   #. Reload the server, again with the `-u real_estate` argument, to load the module data at server
+      start-up.
+   #. In the terminal, execute the command `psql -d tutorials` and enter the command
+      `SELECT * FROM real_estate_property;` to verify that the records were loaded.
+
+.. spoiler:: Solution
+
+   .. code-block:: python
+      :caption: `__manifest__.py`
+      :emphasize-lines: 2
+
+      'data': [
+          'real_estate_property_data.xml',
+      ],
+
+   .. code-block:: xml
+      :caption: `real_estate_property_data.xml`
+
+      <?xml version="1.0" encoding="utf-8"?>
+      <odoo>
+
+          <record id="real_estate.country_house" model="real.estate.property">
+              <field name="name">Country house</field>
+              <field name="description">In the charming village of Grand-Rosière-Hottomont, 5 minutes from all facilities (shops, schools, public transport, ...), we offer this superb newly renovated country house!</field>
+              <field name="type">house</field>
+              <field name="selling_price">745000</field>
+              <field name="floor_area">416</field>
+              <field name="bedrooms">5</field>
+              <field name="has_garden">True</field>
+              <field name="has_garage">True</field>
+              <field name="availability_date">2024-08-01</field>
+          </record>
+
+          <record id="real_estate.loft" model="real.estate.property">
+              <field name="name">Loft</field>
+              <field name="description">Located on the 1st floor of a small, fully renovated building, magnificent 195 m² three-bedroom apartment with parking space.</field>
+              <field name="type">apartment</field>
+              <field name="selling_price">339000</field>
+              <field name="floor_area">195</field>
+              <field name="bedrooms">3</field>
+              <field name="has_garden">False</field>
+              <field name="has_garage">True</field>
+              <field name="availability_date">2025-01-01</field>
+          </record>
+
+          <record id="real_estate.mixed_use_commercial" model="real.estate.property">
+              <field name="name">Mixed use commercial building</field>
+              <field name="description">The property is a former bank agency which consists of a retail ground floor, a basement and 2 extra office floors.</field>
+              <field name="type">retail</field>
+              <field name="selling_price">335000</field>
+              <field name="floor_area">370</field>
+              <field name="bedrooms">0</field>
+              <field name="has_garden">False</field>
+              <field name="has_garage">False</field>
+              <field name="availability_date">2024-10-02</field>
+          </record>
+
+      </odoo>
+
 ----
 
-.. todo: update incentive description when chapter 3 is finished
-
-In the next chapter, we'll :doc:`create elements to interact with the model in the user interface
-<03_basicmodel>`.
+In the next chapter, we'll :doc:`create user interface elements to interact with the property model
+<03_build_user_interface>`.

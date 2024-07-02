@@ -4,6 +4,8 @@ Chapter 1: Architecture overview
 
 Before we start building our app, let's take a high level glance at the architecture of Odoo.
 
+.. _tutorials/server_framework_101/multitier_app:
+
 Multitier application
 =====================
 
@@ -25,6 +27,8 @@ intermediate level in these topics. In order to go through this tutorial, you wi
 knowledge of HTML and an intermediate level of Python. There are plenty of tutorials that are freely
 accessible, so we cannot recommend one over another since it depends on your background. For
 reference, this is the official `Python tutorial <https://docs.python.org/3/tutorial/>`_.
+
+.. _tutorials/server_framework_101/modules:
 
 Odoo modules
 ============

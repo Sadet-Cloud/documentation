@@ -10,6 +10,8 @@ Odoo community and Odoo employees alike, the preferred way is to perform a sourc
    Follow the :ref:`contributing/development/setup` section of the contributing guide to prepare
    your environment for pushing local changes to the Odoo repositories.
 
+.. _tutorials/setup_guide/adapt_env:
+
 Adapt the environment to the tutorials
 ======================================
 
@@ -83,6 +85,8 @@ GitHub.
    providing the appropriate relative path from the `odoo/odoo` repository to the
    `odoo/tutorials` repository.
 
+.. _tutorials/setup_guide/start_server:
+
 Start the server
 ================
 
@@ -138,6 +142,8 @@ the server. In this training you will only need some of them.
        (comma-separated list). This is equivalent to going to :guilabel:`Apps` in the user interface
        and updating the module from there.
 
+.. _tutorials/setup_guide/log_in:
+
 Log in to Odoo
 ==============
 
@@ -150,14 +156,20 @@ To log in as the administrator user, use the following credentials:
 - Email: `admin`
 - Password: `admin`
 
+.. _tutorials/setup_guide/extra_tools:
+
 Extra tools
 ===========
+
+.. _tutorials/setup_guide/extra_tools/dev_mode:
 
 Developer mode
 --------------
 
 :ref:`Enable the developer mode <developer-mode>` to get access to developer-oriented tools in the
 interface.
+
+.. _tutorials/setup_guide/extra_tools/git_commands:
 
 Useful Git commands
 -------------------
@@ -190,7 +202,9 @@ Here are some useful Git commands for your day-to-day work.
      $ git fetch --all --prune
      $ git rebase --autostash enterprise/{BRANCH}
 
-Code Editor
+.. _tutorials/setup_guide/extra_tools/code_editor:
+
+Code editor
 -----------
 
 You are free to choose your code preferred editor. Most Odoo developers use `VSCode
@@ -201,6 +215,8 @@ You are free to choose your code preferred editor. Most Odoo developers use `VSC
 It is important to configure your linters correctly. Using a linter helps you by showing syntax and
 semantic warnings or errors. For JavaScript, we use ESLint and you can find a `configuration file
 example here <https://github.com/odoo/odoo/wiki/Javascript-coding-guidelines#use-a-linter>`_.
+
+.. _tutorials/setup_guide/extra_tools/psql_tools:
 
 Administrator tools for PostgreSQL
 ----------------------------------
@@ -214,7 +230,9 @@ We recommend you connect the GUI application to your database using the Unix soc
 - Port: `5432`
 - Username: `$USER`
 
-Python Debugging
+.. _tutorials/setup_guide/extra_tools/python_debugging:
+
+Python debugging
 ----------------
 
 When facing a bug or trying to understand how the code works, simply printing things out can help a

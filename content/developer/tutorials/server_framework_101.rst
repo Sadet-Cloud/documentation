@@ -36,7 +36,7 @@ Ready? Let's get started!
 
 * :doc:`server_framework_101/01_architecture_overview`
 * :doc:`server_framework_101/02_lay_the_foundations`
-* :doc:`server_framework_101/03_basicmodel`
+* :doc:`server_framework_101/03_build_user_interface`
 * :doc:`server_framework_101/04_securityintro`
 * :doc:`server_framework_101/05_firstui`
 * :doc:`server_framework_101/06_basicviews`
