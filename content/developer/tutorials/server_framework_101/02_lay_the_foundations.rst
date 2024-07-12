@@ -316,7 +316,7 @@ elements, but other operations exist, such as `delete`, which deletes previously
 even `function`, which allows executing arbitrary code.
 
 .. seealso::
-   :doc:`Reference documentation for data file <../../reference/backend/data>`
+   :doc:`Reference documentation for data files <../../reference/backend/data>`
 
 Some data operations require their data elements to be uniquely identified by the system. This is
 achieved by means of the `id` attribute, also known as the **XML ID** or **external identifier**. It

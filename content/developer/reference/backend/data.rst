@@ -76,6 +76,8 @@ following attributes:
 
     Requires an :term:`external id`, defaults to ``True``.
 
+.. _reference/data/field:
+
 ``field``
 ---------
 

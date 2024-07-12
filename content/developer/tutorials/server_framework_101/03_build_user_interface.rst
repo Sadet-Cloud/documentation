@@ -54,10 +54,12 @@ a data file. Let’s do just that and add menu items to our real estate app!
       - Use the `static/description/icon.png` file as `web_icon`, in the format
         `<module>,<icon_file_path>`.
 
-   #. Nest a new "Properties" menu item under the root menu item.
+   #. Nest new "Properties" and "Settings" menu items under the root menu item. As we have not yet
+      created an action to browse properties or open settings, reference the following existing
+      actions instead:
 
-      - As we have not yet created an action to browse properties, reference the action to browse
-        modules for now. Its XML ID is `base.open_module_tree`.
+      - `base.open_module_tree` that opens the list of modules.
+      - `base.action_client_base_menu` that opens the general settings.
 
    #. Reload the server to apply the changes.
 
@@ -85,8 +87,16 @@ a data file. Let’s do just that and add menu items to our real estate app!
 
           <record id="real_estate.properties_menu" model="ir.ui.menu">
               <field name="name">Properties</field>
+              <field name="sequence">10</field>
               <field name="parent_id" ref="real_estate.root_menu"/>
               <field name="action" ref="base.open_module_tree"/>
+          </record>
+
+          <record id="real_estate.settings_menu" model="ir.ui.menu">
+              <field name="name">Settings</field>
+              <field name="sequence">20</field>
+              <field name="parent_id" ref="real_estate.root_menu"/>
+              <field name="action" ref="base.action_client_base_menu"/>
           </record>
 
       </odoo>
@@ -96,8 +106,65 @@ our real estate app! Click it to open the app and automatically trigger the firs
 sub-menu. If you referenced the `base.open_module_tree` action, you should now see a list of Odoo
 modules.
 
-.. todo:: add explanation on the menuitem shortcut  :ref:`reference/data/shortcuts/menuitem`
-.. todo:: add exercise to update the menu definition with menuitem shortcut
+As an application grows in size, so do its menus, and it becomes increasingly complicated to define
+and nest menu items. While defining menu items using the `record` data operation works perfectly
+fine, the server framework provides a shortcut that makes the process easier and more intuitive,
+especially for nesting menu items: the `menuitem` data operation.
+
+The `menuitem` tag is a special XML element that is specifically designed for creating menu items;
+it simplifies the syntax and automatically handles some technical details for you.
+
+.. example::
+   Our fictional `product` module could define menu items as follows:
+
+   .. code-block:: xml
+
+      <menuitem id="product.root_menu" name="Product" web_icon="product,static/description/product.png">
+          <menuitem id="product.products_menu" name="Products" sequence="10" action="product.view_products_action"/>
+      </menuitem>
+
+   .. note::
+      - The outer `menuitem` element creates the top-level "Product" menu item.
+      - The specifications (`name`, `web_icon`, `sequence`, `action`, ...) of menu items are set
+        through attributes of the XML element.
+      - The menu items hierarchy is defined by nesting their XML elements.
+
+Why keep complex code when you can simplify it? It's already time for our first **code
+refactoring**!
+
+.. exercise::
+   Rewrite the description of the menu items of our real estate app using the `menuitem` data
+   operation instead of `record`.
+
+.. spoiler:: Solution
+
+   .. code-block:: xml
+      :caption: `real_estate_menus.xml`
+      :emphasize-lines: 4-21
+
+      <?xml version="1.0"?>
+      <odoo>
+
+          <menuitem
+              id="real_estate.root_menu"
+              name="Real Estate"
+              web_icon="real_estate,static/description/icon.png"
+          >
+              <menuitem
+                  id="real_estate.properties_menu"
+                  name="Properties"
+                  sequence="10"
+                  action="base.open_module_tree"
+              />
+              <menuitem
+                  id="real_estate.settings_menu"
+                  name="Settings"
+                  sequence="20"
+                  action="base.action_client_base_menu"
+              />
+          </menuitem>
+
+      </odoo>
 
 .. _tutorials/server_framework_101/define_actions:
 
@@ -123,15 +190,18 @@ the `ir.actions.act_window` model whose key fields include:
    The model on which the action operates.
 `view_mode`
    A comma-separated list of view types to enable for this action; for example, `tree,form,kanban`.
+`help`
+   An optional helper text for the users when there are no records to display.
 
 .. seealso::
    :doc:`Reference documentation for actions <../../reference/backend/actions>`
 
 .. example::
+   The example below defines an action to open existing products in either list or form view.
 
    .. code-block:: xml
 
-      <record id="action_product" model="ir.actions.act_window">
+      <record id="product.view_products_action" model="ir.actions.act_window">
           <field name="name">Products</field>
           <field name="res_model">product</field>
           <field name="view_mode">tree,form</field>
@@ -142,7 +212,10 @@ the `ir.actions.act_window` model whose key fields include:
           </field>
       </record>
 
-.. todo:: comment example
+   .. note::
+      The content of the `help` field can be written in different format thanks to the `type`
+      attribute of the :ref:`field <reference/data/field>` data operation.
+
 .. todo:: add exercise to create a window action for the list AND form views of the real_estate_property model
 .. todo:: add the solution
 
@@ -169,6 +242,10 @@ In Odoo, views are records of the `ir.ui.view` model. Key fields include:
    The model the view is associated with.
 `arch` (required)
    The view architecture as an XML string.
+
+.. seealso::
+   TODO
+   .. :doc:`Reference documentation for views <../../reference/backend/actions>`
 
 .. todo:: comment examples
 
